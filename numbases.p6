@@ -1,4 +1,4 @@
-#!/usr/bin per6
+#!/usr/bin
 
 sub MAIN ( $thingy ) {
   my $number = $thingy.parse-base: 16;
