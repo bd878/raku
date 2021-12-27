@@ -1,6 +1,6 @@
 #!/usr/bin
 
-sub MAIN ( $highest = 100 ) {
+sub MAIN ( $highest = 100, $ratio = $highest / 2 ) {
   my $number = $highest.rand.Complex.Int + 0i;
 
   loop {
@@ -12,10 +12,10 @@ sub MAIN ( $highest = 100 ) {
     put '#', $attempt, ' attempt';
     $guess = prompt 'Your complex number ($num+0i): ';
 
-    if $guess > $number / 2 {
+    if $guess > $ratio {
       put 'guessed number is less';
       }
-    elsif $guess < $number / 2 {
+    elsif $guess <= $ratio {
       put 'guessed number is greater';
       }
     else {
