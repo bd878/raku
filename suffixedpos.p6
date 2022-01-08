@@ -1,17 +1,19 @@
 #!/usr/bin
 
 sub suf {
+  my $endings = Map.new:
+    1 => 'st',
+    2 => 'nd',
+    3 => 'rd',
+    ;
+
   my $seq = gather {
     loop {
       state $item = 1;
 
       my $suffix;
-      if $item == 1 {
-        $suffix = 'st';
-      } elsif $item == 2 {
-        $suffix = 'nd';
-      } elsif $item == 3 {
-        $suffix = 'rd';
+      if $endings{$item}:exists {
+        $suffix = $endings{$item};
       } else {
         $suffix = 'th';
       }

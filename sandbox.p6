@@ -1,4 +1,13 @@
 #!/usr/bin
 
-my @*endings = <st nd rd th>
-for @*endings
+my $list = map {
+  slip {
+    if $^a == 2 {
+      'hello';
+    } else {
+      $^a;
+    }
+  }
+}, 1..3;
+
+put $list;
