@@ -1,10 +1,10 @@
 #!/usr/bin
 
 sub suf {
-  my $endings = Map.new:
-    1 => 'st',
-    2 => 'nd',
-    3 => 'rd',
+  my %endings =
+    1, 'st',
+    2, 'nd',
+    3, 'rd'
     ;
 
   my $seq = gather {
@@ -12,8 +12,8 @@ sub suf {
       state $item = 1;
 
       my $suffix;
-      if $endings{$item}:exists {
-        $suffix = $endings{$item};
+      if %endings{$item}:exists {
+        $suffix = %endings{$item};
       } else {
         $suffix = 'th';
       }
