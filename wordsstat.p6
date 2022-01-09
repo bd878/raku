@@ -8,8 +8,8 @@ sub MAIN ( Str:D $name ) {
 
   my %count;
   for $file.lines() -> $line {
-    for $line.split: ' ' -> $word {
-      %count{$word.lc.trim}++;
+    for $line.words -> $word {
+      %count{$word.lc}++;
     }
   }
 
