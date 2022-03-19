@@ -1,4 +1,8 @@
 #!/usr/bin/perl
 
+use Student;
+
 print "Welcome to checkbook 1.1\n";
-print "Please enter your name: ";
+
+my $student = new Student("Ivan", 20);
+print "$student->{'name'}\non grade $student->{'grade_number'}\n";
