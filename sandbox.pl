@@ -1,5 +1,9 @@
 #!/usr/bin/perl
 
-print "Bob" . "Smith";
-print "Bob" . " " . "Smith";
-print length("Bob");
+use strict;
+
+foreach my $arg (@ARGV) {
+  print $arg, "\n";
+} 
+
+1;
