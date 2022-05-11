@@ -1,0 +1,97 @@
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <style type="text/css">
+    #aircraft {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .field + .field {
+      margin-top: 10px;
+    }
+
+    .field {
+      display: flex;
+      flex-flow: column;
+    }
+
+    .submitButton {
+      margin-top: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <form id="aircraft">
+      <div class="field">
+        <label for="model">Модель:</label>
+        <input name="model" type="text" />
+      </div>
+
+      <div class="field">
+        <label for="en">Английский:</label>
+        <input name="en" type="text" />
+      </div>
+
+      <div class="field">
+        <label for="ru">На русском:</label>
+        <input name="ru" type="text" />
+      </div>
+
+      <div class="field">
+        <label for="range">Дальность полёта:</label>
+        <input name="range" type="text" />
+      </div>
+
+      <button class="submitButton" type="submit">Добавить</button>
+    </form>
+  </div>
+</body>
+
+<script async="async">
+  const form = document.getElementById('aircraft');
+  const URL = "http://10.0.3.10/add_aircraft";
+
+  const log = (message, ...values) => { console.log(message, ...values); }
+  const err = (message, e) => { console.error(message, e); }
+
+  async function sendForm(event) {
+    event.preventDefault();
+
+    log('event received:', event);
+
+    const body = {}
+    for (const fieldElement of event.target) {
+      if (fieldElement.name) {
+        body[fieldElement.name] = fieldElement.value;
+      }
+    }
+
+    log('body:', body);
+
+    const request = new Request(URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body)
+    });
+
+    try {
+      const response = await fetch(request);
+      log('response:', response);
+    } catch (e) {
+      err('failed to send form', e);
+    }
+  }
+
+  if (form) {
+    form.addEventListener('submit', sendForm);
+  }
+</script>
+</html>
