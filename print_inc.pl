@@ -1,6 +1,5 @@
 #!/usr/bin/perl
 
-sub MAIN {
-  print "@INC";
+while (<@INC>) {
+  print "$_\n";
 }
-
