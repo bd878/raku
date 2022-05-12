@@ -29,8 +29,8 @@
   <div>
     <form id="aircraft">
       <div class="field">
-        <label for="model">Модель:</label>
-        <input name="model" type="text" />
+        <label for="code">Модель:</label>
+        <input name="code" type="text" />
       </div>
 
       <div class="field">
@@ -51,15 +51,27 @@
       <button class="submitButton" type="submit">Добавить</button>
     </form>
   </div>
+
+  <div>
+    <p>Авиапарк:</p>
+    <div id="aircraftsContainer">
+    </div>
+  </div>
 </body>
+<!-- logger -->
+<script type="text/javascript" async="defer">
+  function log(message, ...values) {
+    console.log(message, ...values);
+  }
 
-<script async="async">
-  const form = document.getElementById('aircraft');
-  const URL = "http://10.0.3.10/add_aircraft";
+  function err(message, e) {
+    console.error(message, e);
+    throw new Error(message);
+  }
+</script>
 
-  const log = (message, ...values) => { console.log(message, ...values); }
-  const err = (message, e) => { console.error(message, e); }
-
+<!-- add new aircraft -->
+<script type="text/javascript" async="defer">
   async function sendForm(event) {
     event.preventDefault();
 
@@ -74,7 +86,7 @@
 
     log('body:', body);
 
-    const request = new Request(URL, {
+    const request = new Request("http://213.189.221.57/add_aircraft", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -90,8 +102,86 @@
     }
   }
 
-  if (form) {
-    form.addEventListener('submit', sendForm);
+  const getForm = () => document.getElementById('aircraft') || err('no aircrafts form on DOM');
+  window.addEventListener('load', () => getForm().addEventListener('submit', sendForm))
+</script>
+
+<!-- load aircrafts -->
+<script type="text/javascript" async="defer">
+  async function loadAircrafts() {
+    log('loading aircrafts...');
+
+    let result = [];
+
+    try {
+      const response = await fetch("http://213.189.221.57/aircrafts", { method: 'GET' });
+      if (!response.ok) {
+        err('response is not ok', response.status);
+      }
+
+      const body = await response.json();
+      /* { list: [[code, model, range], ...] }*/
+      log('response body:', body);
+      result = body.list;
+    } catch (e) {
+      err('failed to fetch aircrafts', e);
+    }
+
+    return result;
   }
+
+  function buildAircraftsList(aircrafts) {
+    const aircraftsList = document.createElement('ul');
+
+    aircrafts.forEach(([code, model, range], i) => {
+      const listItemContainer = document.createElement('div');
+      listItemContainer.setAttribute('id', `aircraft-${code}`);
+
+      const deleteButton = document.createElement('button');
+      deleteButton.setAttribute('type', 'button');
+      deleteButton.addEventListener('click', deleteAircraft);
+      deleteButton.dataset.aircraftCode = code;
+      deleteButton.textContent = '[X]';
+
+      const listItem = document.createElement('li');
+      listItem.textContent = `#${i}: ${code} ${model} ${range}`;
+
+      listItemContainer.appendChild(deleteButton);
+      listItemContainer.appendChild(listItem);
+
+      aircraftsList.appendChild(listItemContainer);
+    });
+
+    const aircraftsContainer = document.getElementById('aircraftsContainer');
+    aircraftsContainer.appendChild(aircraftsList);
+  }
+
+  async function deleteAircraft(event) {
+    event.preventDefault();
+
+    const aircraftCode = event.target.dataset.aircraftCode;
+    log('deleting aircraft:', aircraftCode);
+
+    const request = new Request("http://213.189.221.57/delete_aircraft", {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: aircraftCode
+    });
+
+    try {
+      const response = await fetch(request);
+      log('response:', response);
+    } catch (e) {
+      err('failed to delete aircraft', e);
+    }
+
+    const aircraftListItemContainer = document.getElementById(`aircraft-${aircraftCode}`);
+    aircraftListItemContainer.remove();
+  }
+
+  window.addEventListener('load', async () => {
+    const aircrafts = await loadAircrafts();
+    buildAircraftsList(aircrafts);
+  });
 </script>
 </html>
