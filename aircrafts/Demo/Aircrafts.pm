@@ -1,4 +1,3 @@
-
 #!/usr/bin/perl
 
 package Demo::Aircrafts;
@@ -6,8 +5,7 @@ package Demo::Aircrafts;
 use strict;
 use warnings;
 
-use open ':std', IO => ':encoding(UTF-8)';
-
+use JSON::PP;
 use DBI;
 
 sub handler {
@@ -16,15 +14,21 @@ sub handler {
   $r->content_type('text/plain');
 
   my $dbh = DBI->connect("dbi:Pg:database=demo;host=127.0.0.1;port=5432", "admin", "admin",
-    { RaiseError => 1, AutoCommit => 0 });
+    { RaiseError => 1, AutoCommit => 0, pg_enable_utf8 => 0 });
 
   my $sth = $dbh->prepare("SELECT * FROM aircrafts;");
 
   $sth->execute();
 
+  my %body = (
+    list => []
+  );
+
   while ( my @row = $sth->fetchrow_array ) {
-    print "@row\n";
+    push @{$body{'list'}}, \@row;
   }
+
+  print encode_json \%body;
 
   $dbh->disconnect;
 

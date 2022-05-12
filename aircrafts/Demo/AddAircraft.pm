@@ -5,7 +5,7 @@ package Demo::AddAircraft;
 use strict;
 use warnings;
 
-use Validators ();
+use Validators qw(run_validators validate_code);
 use JSON::PP;
 use DBI;
 use DBD::Pg qw(:pg_types);
@@ -25,9 +25,9 @@ sub handler {
   $r->read(my $data, IOBUFSIZE);
   my $body = decode_json $data;
 
-  my @validators = (Validators::validate_code($body->{'code'}));
+  my @validators = (validate_code($body->{'code'}));
 
-  unless (my $error = Validators::run_validators(\@validators)) {
+  unless (my $error = run_validators(\@validators)) {
     $sth->bind_param(1, $body->{'code'});
     $sth->bind_param(2, encode_json({ en => $body->{'en'}, ru => $body->{'ru'} }), { pg_type => PG_JSONB });
     $sth->bind_param(3, $body->{'range'}, { pg_type => PG_INT4 });
