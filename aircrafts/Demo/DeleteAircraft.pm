@@ -22,9 +22,9 @@ sub handler {
 
   $r->read(my $data, IOBUFSIZE);
 
-  unless (my $error = validate_code($data)) {
+  my $code_validator = validate_code($data);
+  unless (my $error = &$code_validator()) {
     $sth->bind_param(1, $data);
-
     $sth->execute();
   } else {
     print $error;
