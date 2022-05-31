@@ -16,6 +16,7 @@ my $dir;
 my $n;
 
 my %routes = (
+  # TODO: switch/select with start
   "-n" => sub { my $val = shift; return "empty" unless defined $val; return "n" if $val eq "-n"; if ($val =~ /[0-9]+/g) { $n = $val; return "exit"; }; },
   "n" => sub { $n = shift; $n = 5 unless defined $n; $dir = "." unless defined $dir; return "exit"; },
   "dir" => sub { $dir = shift; return "-n"; },
